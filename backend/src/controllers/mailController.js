@@ -11,6 +11,11 @@ const transporter = createTransport({
 });
 
 const sendMail = async ({ to, subject, text }) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log("⚠️  Email credentials (EMAIL_USER/EMAIL_PASS) missing. Skipping email send.");
+    return;
+  }
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: to,

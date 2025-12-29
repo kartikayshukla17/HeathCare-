@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Stethoscope } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
+import api from '../api/axios'; // Import the axios instance
+import { useAppointments } from '../context/AppointmentContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,30 +12,28 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { fetchAppointments } = useAppointments();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password, role }),
+            // Using axios instance
+            const response = await api.post('/auth/login', {
+                email,
+                password,
+                role,
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('user', JSON.stringify(data.user));
+            if (response.status === 200) {
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                await fetchAppointments(); // Refresh context state
                 navigate('/');
-            } else {
-                setError(data.message || 'Login failed');
             }
         } catch (err) {
-            setError('Something went wrong. Please try again.');
+            // Axios stores the response in err.response
+            setError(err.response?.data?.message || 'Login failed. Please try again.');
         }
     };
 
@@ -87,8 +87,8 @@ const Login = () => {
                                     type="button"
                                     onClick={() => setRole(r)}
                                     className={`py-2.5 px-2 text-sm font-medium rounded-xl capitalize transition-all duration-200 border ${role === r
-                                            ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/25'
-                                            : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/25'
+                                        : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-700'
                                         }`}
                                 >
                                     {r}

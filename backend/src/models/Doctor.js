@@ -16,29 +16,28 @@ const DoctorSchema = new mongoose.Schema(
             required: true,
         },
         specialization: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Specialization",
+            required: true,
+        },
+        gender: {
             type: String,
             required: true,
         },
-        experience: {
-            type: Number,
+        image: {
+            type: String,
             required: true,
         },
-        fees: {
-            type: Number,
-            required: true,
-        },
-        // phone field removed as per request
+        // Using loose schema for availability to match JSON structure exactly:
+        // [{ day: "Monday", slots: ["09:00-11:00", "11:30-13:30"] }]
         availability: [
             {
                 day: { type: String, required: true },
-                startTime: { type: String, required: true },
-                endTime: { type: String, required: true },
+                slots: [{ type: String }],
             },
         ],
-        department: {
-            type: String,
-            required: true,
-        },
+        // Removed fees and experience as they are not in the provided JSON
+        // Removed department in favor of specialization (or mapped appropriately)
     },
     { timestamps: true }
 );

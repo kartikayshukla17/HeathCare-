@@ -23,6 +23,10 @@ const PatientSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        bloodGroup: {
+            type: String,
+            default: "",
+        },
         // phone field removed as per request
         DOB: {
             type: Date,
@@ -31,6 +35,10 @@ const PatientSchema = new mongoose.Schema(
         address: {
             type: String,
             required: true,
+        },
+        image: {
+            type: String,
+            default: "",
         },
     },
     { timestamps: true }

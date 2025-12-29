@@ -19,7 +19,7 @@ export const protect = async (req, res, next) => {
         try {
             // Verify token
             // Use config default if process.env isn't set yet (though it should be)
-            const secret = process.env.JWT_SECRET || 'default_secret_for_dev'; 
+            const secret = process.env.JWT_SECRET || 'default_secret_for_dev';
             const decoded = jwt.verify(token, secret);
 
             // Get user from the token based on role
@@ -35,13 +35,13 @@ export const protect = async (req, res, next) => {
 
             if (!user) {
                 // If role was missing or invalid, or user deleted
-                 res.status(401);
-                 throw new Error('Not authorized, user not found');
+                res.status(401);
+                throw new Error('Not authorized, user not found');
             }
 
             req.user = user;
             // Attach role to req.user for easier access if needed, or use decoded.role
-            req.user.role = decoded.role; 
+            req.user.role = decoded.role;
 
             next();
         } catch (error) {
@@ -68,4 +68,14 @@ export const leadOnly = (req, res, next) => {
         res.status(403);
         next(new Error('Not authorized, Admin access only'));
     }
+};
+
+export const authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            res.status(403);
+            return next(new Error(`User role ${req.user.role} is not authorized to access this route`));
+        }
+        next();
+    };
 };
