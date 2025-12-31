@@ -13,7 +13,9 @@ const Signup = () => {
         password: "",
         role: "patient",
         gender: "Male",
-        specialization: ""
+        specialization: "",
+        DOB: "",
+        address: ""
     });
     const [specializations, setSpecializations] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +56,14 @@ const Signup = () => {
         e.preventDefault();
 
         try {
-            await dispatch(registerUser(formData)).unwrap();
+            // Remove 'Dr. ' prefix if present for doctors, to ensure clean name in DB
+            const submissionData = { ...formData };
+            if (submissionData.role === 'doctor' && submissionData.name.startsWith("Dr. ")) {
+                submissionData.name = submissionData.name.replace(/^Dr\.\s+/, "");
+            }
+
+            await dispatch(registerUser(submissionData)).unwrap();
+            navigate('/login');
         } catch (err) {
             console.error("Registration failed", err);
         }
@@ -126,8 +135,16 @@ const Signup = () => {
                             type="text"
                             name="name"
                             required
-                            value={formData.name}
-                            onChange={handleChange}
+                            value={formData.role === 'doctor' && !formData.name.startsWith("Dr. ") && formData.name ? `Dr. ${formData.name}` : formData.name}
+                            onChange={(e) => {
+                                let val = e.target.value;
+                                if (formData.role === 'doctor') {
+                                    if (val.startsWith("Dr. ")) {
+                                        val = val.substring(4);
+                                    }
+                                }
+                                setFormData({ ...formData, name: val });
+                            }}
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder={formData.role === 'doctor' ? "Dr. Name" : "John Doe"}
                         />
@@ -159,6 +176,33 @@ const Signup = () => {
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
                         </select>
+                    </div>
+
+                    {/* Date of Birth & Address - Required for Registration */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Date of Birth</label>
+                            <input
+                                type="date"
+                                name="DOB"
+                                required
+                                value={formData.DOB}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Address</label>
+                            <input
+                                type="text"
+                                name="address"
+                                required
+                                value={formData.address}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
+                                placeholder="City, Country"
+                            />
+                        </div>
                     </div>
 
                     {/* Specialization - Only for Doctor */}

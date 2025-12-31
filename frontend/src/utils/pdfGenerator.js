@@ -36,7 +36,7 @@ export const downloadReportPDF = (report) => {
 
     doc.text(`Patient Name: ${report.patientId?.name || "N/A"}`, 14, startY);
     doc.text(`Doctor Name: Dr. ${report.doctorId?.name || "N/A"}`, 14, startY + lineHeight);
-    doc.text(`Specialization: ${report.doctorId?.specialization || "General"}`, 14, startY + lineHeight * 2);
+    doc.text(`Specialization: ${report.doctorId?.specialization?.name || report.doctorId?.specialization || "General"}`, 14, startY + lineHeight * 2);
     doc.text(`Date: ${new Date(report.createdAt).toLocaleDateString()}`, 140, startY);
     doc.text(`Time: ${new Date(report.createdAt).toLocaleTimeString()}`, 140, startY + lineHeight);
 

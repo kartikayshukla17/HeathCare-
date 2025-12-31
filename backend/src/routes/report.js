@@ -21,7 +21,12 @@ router.post("/", async (req, res, next) => {
         const savedReport = await newReport.save();
 
         // Populate details for the frontend
-        await savedReport.populate('doctorId', 'name specialization');
+        await savedReport.populate({
+            path: 'doctorId',
+            select: 'name specialization',
+            populate: { path: 'specialization', select: 'name' }
+        });
+        await savedReport.populate('patientId', 'name gender DOB address');
 
         // Emit real-time event to the patient
         try {
@@ -44,8 +49,12 @@ router.post("/", async (req, res, next) => {
 router.get("/appointment/:appointmentId", async (req, res, next) => {
     try {
         const report = await Report.findOne({ appointmentId: req.params.appointmentId })
-            .populate('doctorId', 'name specialization')
-            .populate('patientId', 'name');
+            .populate({
+                path: 'doctorId',
+                select: 'name specialization',
+                populate: { path: 'specialization', select: 'name' }
+            })
+            .populate('patientId', 'name gender DOB address');
 
         if (!report) {
             return res.status(404).json({ message: "Report not found" });
@@ -60,7 +69,12 @@ router.get("/appointment/:appointmentId", async (req, res, next) => {
 router.get("/patient/:patientId", async (req, res, next) => {
     try {
         const reports = await Report.find({ patientId: req.params.patientId })
-            .populate('doctorId', 'name specialization')
+            .populate({
+                path: 'doctorId',
+                select: 'name specialization',
+                populate: { path: 'specialization', select: 'name' }
+            })
+            .populate('patientId', 'name gender DOB address') // Ensure patient details are also there if needed
             .populate('appointmentId', 'date time')
             .sort({ createdAt: -1 });
 
@@ -78,7 +92,12 @@ router.get("/doctor/me", async (req, res, next) => {
         if (!doctorId) return res.status(400).json({ message: "Doctor ID required" });
 
         const reports = await Report.find({ doctorId })
-            .populate('patientId', 'name')
+            .populate('patientId', 'name gender DOB address')
+            .populate({
+                path: 'doctorId',
+                select: 'name specialization',
+                populate: { path: 'specialization', select: 'name' }
+            })
             .populate('appointmentId', 'date time')
             .sort({ createdAt: -1 });
 

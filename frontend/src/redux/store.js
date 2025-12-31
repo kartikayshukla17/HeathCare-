@@ -3,6 +3,7 @@ import authReducer from "./slices/authSlice";
 import appointmentReducer from "./slices/appointmentSlice";
 import slotReducer from "./slices/slotSlice";
 import reportReducer from './slices/reportSlice';
+import waterReducer from './slices/waterSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
         appointments: appointmentReducer,
         slots: slotReducer,
         reports: reportReducer,
+        water: waterReducer,
     },
 });

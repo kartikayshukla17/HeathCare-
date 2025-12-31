@@ -89,7 +89,7 @@ const PatientReports = () => {
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-gray-900 dark:text-white text-lg group-hover:text-blue-600 transition-colors">Dr. {d.info.name}</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{d.info.specialization || "General"}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{d.info.specialization?.name || d.info.specialization || "General"}</p>
                                     </div>
                                 </div>
                                 <div className="text-xs text-gray-400 border-t border-gray-100 dark:border-zinc-700 pt-4 flex justify-between items-center">

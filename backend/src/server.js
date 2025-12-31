@@ -17,7 +17,8 @@ import organizationRoutes from './routes/organization.js';
 import notificationRoutes from './routes/notifications.js';
 import specializationRoutes from './routes/specializations.js';
 import paymentRoutes from './routes/payment.js';
-import reportRoutes from './routes/report.js';
+import reportRoutes from "./routes/report.js";
+import waterRoutes from "./routes/water.js";
 
 // Middleware / Utils
 import errorHandler from './middleware/errorMiddleware.js';
@@ -66,7 +67,8 @@ app.use('/api/invites', inviteRoutes);
 app.use('/api/organization', organizationRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/payment', paymentRoutes);
-app.use('/api/reports', reportRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/water", waterRoutes);
 
 app.get('/', (req, res) => {
     res.send('MediCare+ API is Running');

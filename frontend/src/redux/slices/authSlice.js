@@ -21,8 +21,7 @@ export const registerUser = createAsyncThunk(
     async (userData, { rejectWithValue }) => {
         try {
             const response = await api.post("/auth/register", userData);
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+            // Do NOT log in automatically. Return data for success message if needed.
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || "Registration failed");
@@ -67,6 +66,10 @@ const authSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
+        updateUser: (state, action) => {
+            state.user = action.payload;
+            localStorage.setItem("user", JSON.stringify(action.payload));
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -91,8 +94,7 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload.user;
-                state.token = action.payload.token;
+                // No state update for user/token to prevent auto-login
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;
@@ -110,5 +112,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, updateUser } = authSlice.actions;
 export default authSlice.reducer;

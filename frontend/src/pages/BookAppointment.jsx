@@ -114,7 +114,11 @@ const BookAppointment = () => {
     };
 
     const handleBack = () => {
-        if (step > 1) setStep(step - 1);
+        if (step > 1) {
+            setStep(step - 1);
+        } else {
+            navigate(-1);
+        }
     };
 
     const handlePayment = async () => {
@@ -213,11 +217,9 @@ const BookAppointment = () => {
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <div className="flex items-center gap-4">
-                        {step > 1 && (
-                            <button onClick={handleBack} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 transition-colors">
-                                <ChevronRight className="rotate-180 text-gray-600 dark:text-gray-300" />
-                            </button>
-                        )}
+                        <button onClick={handleBack} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 transition-colors">
+                            <ChevronRight className="rotate-180 text-gray-600 dark:text-gray-300" />
+                        </button>
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Book Appointment</h1>
                     </div>
                     <ThemeToggle />

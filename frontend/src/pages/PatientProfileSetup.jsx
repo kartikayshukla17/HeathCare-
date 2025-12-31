@@ -4,7 +4,11 @@ import { Save, User, MapPin, Calendar, Droplet } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import api from '../api/axios';
 
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../redux/slices/authSlice';
+
 const PatientProfileSetup = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -83,9 +87,12 @@ const PatientProfileSetup = () => {
             });
 
             if (response.status === 200) {
+                // Update Redux state with new user data (including image)
+                dispatch(updateUser(response.data.data));
                 navigate('/'); // Redirect to dashboard
             }
         } catch (err) {
+            console.error(err);
             setError(err.response?.data?.message || 'Failed to update profile');
         } finally {
             setLoading(false);
